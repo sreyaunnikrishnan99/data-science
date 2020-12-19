@@ -1,0 +1,33 @@
+library(covid19.analytics)
+library(ggplot2)
+library(prophet)
+library(lubridate)
+library(dplyr)
+
+
+#dataread
+tsc<-covid19.data(case= "ts-confirmed")
+
+
+#US data alone fetching
+tsc<-tsc %>% filter(Country.Region=='US')
+
+#row to column
+tsc<-data.frame(t(tsc))
+
+#changing date index to variable
+t.tsc<-cbind(rownames(tsc), data.frame(tsc, row.names =NULL))
+
+#changing column names
+colnames(t.tsc)<-c('Date','Confirmed')
+
+#correcting format
+t.tsc$Date <- ymd(t.tsc$Date)
+
+#correcting format
+t.tsc$Confirmed <- as.numeric(t.tsc$Confirmed)
+
+str(t.tsc)
+#plotting
+qplot(Date,Confirmed,data=t.tsc,
+      main="Covid19 confirmed cases in US")
